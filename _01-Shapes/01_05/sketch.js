@@ -31,6 +31,7 @@ function polygon(pX, pY, radius, ncorners) {
 }
 
 
+let noiseXOffH = Math.random();
 let noiseXOffS = Math.random();
 let noiseXOffB = Math.random();
 let noiseXInc = .1;
@@ -38,10 +39,11 @@ function getRandomColor(){
   const floor = Math.floor;
   const random = Math.random; //number [0,1]
   const factor = 100;
+  noiseXOffH = noiseXOffH + noiseXInc;
   noiseXOffS = noiseXOffS + noiseXInc;
   noiseXOffB = noiseXOffB + noiseXInc;
   // return color(floor(noise(noiseXOff)*factor), floor(noise(noiseXOff)*factor), floor(noise(noiseXOff)*factor))
-  return color(Math.random() * factor, floor(noise(noiseXOffS)*factor), floor(noise(noiseXOffB)*factor));
+  return color(floor(noise(noiseXOffH)*factor), floor(noise(noiseXOffS)*factor), floor(noise(noiseXOffB)*factor));
 }
 
 function generateColorArray(){
