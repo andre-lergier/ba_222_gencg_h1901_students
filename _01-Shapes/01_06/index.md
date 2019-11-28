@@ -1,6 +1,6 @@
 ---
 layout: sketch
-title: "test 05" 
+title: "drawing mandala" 
 category: "Experiment" 
 thumb_name: "thumb.jpg"
 includes:

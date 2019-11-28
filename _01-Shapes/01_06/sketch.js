@@ -5,7 +5,9 @@
 var options = {
   baseCorners: 14,
   nElements: 10,
-  radius: 40,
+  radius: 12,
+  opacity: 0,
+  changeColor: true,
 };
 
 var colors = [];
@@ -15,6 +17,8 @@ window.onload = function() {
   gui.add(options, 'baseCorners').min(3).max(25).step(1);
   gui.add(options, 'nElements').min(2).max(30).step(1);
   gui.add(options, 'radius').min(10).max(1000).step(1);
+  gui.add(options, 'opacity').min(0).max(50).step(0.2);
+  gui.add(options, 'changeColor');
 };
 
 function polygon(pX, pY, radius, ncorners) {
@@ -31,15 +35,19 @@ function polygon(pX, pY, radius, ncorners) {
 }
 
 
-let noiseXOff = 0;
-let noiseXInc = 5;
+let noiseXOffH = Math.random();
+let noiseXOffS = Math.random();
+let noiseXOffB = Math.random();
+let noiseXInc = .01;
 function getRandomColor(){
-  const floor = Math.floor;
+  const floor = Math.floor; //number [0,1]
   const random = Math.random; //number [0,1]
   const factor = 100;
-  noiseXOff = noiseXOff + noiseXInc;
+  noiseXOffH = noiseXOffH + 0.1;
+  noiseXOffS = noiseXOffS + noiseXInc;
+  noiseXOffB = noiseXOffB + noiseXInc;
   // return color(floor(noise(noiseXOff)*factor), floor(noise(noiseXOff)*factor), floor(noise(noiseXOff)*factor))
-  return color(floor(noise(noiseXOff)*factor), floor(noise(noiseXOff)*factor), floor(noise(noiseXOff)*factor));
+  return color(floor(noise(noiseXOffH)*factor), floor(noise(noiseXOffS)*factor), floor(noise(noiseXOffB)*factor));
 }
 
 function generateColorArray(){
@@ -60,7 +68,8 @@ function setup() {
   var density = displayDensity();
   pixelDensity(density);
 
-  colorMode(HSB, 100);
+  colorMode(HSB,100);
+  background(0,0,0);
 
   /**
    * generate colorsArray
@@ -68,23 +77,40 @@ function setup() {
   generateColorArray();
 }
 
-let noiseBaseX = 0;
-let noiseBaseY = 10;
+
+let drawCount = 0;
+let snakes = 5;
+let noiseBaseX = [];
+let noiseBaseY = [];
+let noiseIncrement = 0.01;
+
+for(let s=0; s<snakes; s++){
+  noiseBaseX[s] = Math.random() * 10;
+  noiseBaseY[s] = Math.random() * 10;
+}
 
 function draw() {
+  if(drawCount%50 == 0){
+    generateColorArray();
+  }
+  // generateColorArray()
   noStroke();
-  fill(0,5);
+  fill(0,options.opacity);
   rect(0,0,width,height);
 
-  noiseBaseY += 0.01;
-  noiseBaseX += 0.01;
+  for(let j=0; j < snakes; j++){
+    noiseBaseX[j] += noiseIncrement;
+    noiseBaseY[j] += noiseIncrement;
 
-  for(let i=0; i < options.nElements; i++){
-    fill(colors[i]);
-    radiusFactor = (options.radius / options.nElements) * i;
-    radius = options.radius - radiusFactor;
-    polygon(floor(noise(noiseBaseX) * windowWidth),floor(noise(noiseBaseY) * windowHeight),radius,options.baseCorners - i);
+    for(let i=0; i < options.nElements; i++){
+      fill(colors[i]);
+      radiusFactor = (options.radius / options.nElements) * i;
+      radius = options.radius - radiusFactor;
+      polygon((noise(noiseBaseX[j]) * windowWidth),(noise(noiseBaseY[j]) * windowHeight),radius,options.baseCorners - i);
+    }
   }
+
+  drawCount++;
 }
 
 
@@ -93,6 +119,7 @@ function draw() {
  */
 function keyPressed() {
   if (key == 's' || key == 'S') saveThumb(650, 350);
+  if (key == 'c' || key == 'C') generateColorArray();
 }
 
 /**
