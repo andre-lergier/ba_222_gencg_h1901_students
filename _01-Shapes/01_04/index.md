@@ -1,10 +1,11 @@
 ---
 layout: sketch
-title: "01_03" 
-category: "Experiment" 
+title: "Own Test" 
+category: "Experiment 05" 
 thumb_name: "thumb.jpg"
 includes:
   - src: "sketch.js"
+  - src: "gui.js"
 ---
 
 <!-- 

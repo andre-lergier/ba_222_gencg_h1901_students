@@ -1,63 +1,53 @@
-// Based on the code P_2_1_1_01.pde from
+// Based on the code P_2_0_02.pde from
 // Generative Gestaltung, ISBN: 978-3-87439-759-9
 
 // Global var
-var tileCount, actRandomSeed, actStrokeCap;
- 
+// The var are initialised in gui.js
+
 function setup() {
   // Canvas setup
-  canvas = createCanvas(windowWidth, windowHeight-45);
+  canvas = createCanvas(windowWidth, windowHeight);
   canvas.parent("p5Container");
   // Detect screen density (retina)
   var density = displayDensity();
   pixelDensity(density);
-  // Colors and drawing modes
-  smooth();
-  // Init Var
-  tileCount = 20;
-  actRandomSeed = 0;
-  actStrokeCap = ROUND; 
+  // Init var
+  // The var are initialised in gui.js
 }
 
 function draw() {
-  // Canvas draw options
-  background(255);
+
+  translate(width/options.tileCount/2, height/options.tileCount/2);
+
+  background(0, options.bgAlpha);
   smooth();
-  noFill();
+  if (!options.fill) {
+    noFill();
+    stroke(options.circleLineColor, options.circleLineAlpha);
+  } else {
+    fill(options.circleFillColor);    
+  }
+  randomSeed(options.actRandomSeed);
+  strokeWeight(mouseY/100);
 
-  // Stroke options
-  strokeCap(actStrokeCap);
-  randomSeed(actRandomSeed);
+  for (gridY=0; gridY<options.tileCount; gridY++) {
+    for (gridX=0; gridX<options.tileCount; gridX++) {
 
-  for (let gridX = 0; gridX < tileCount; gridX++) {
-    for (let gridY = 0; gridY < tileCount; gridY++) {
+      // draw element here
+      
+      posX = width/options.tileCount * gridX;
+      posY = height/options.tileCount * gridY;
 
-      let posX = width / tileCount * gridX;
-      let posY = width / tileCount * gridY;
+      shiftX = random(-mouseX, mouseX)/20;
+      shiftY = random(-mouseX, mouseX)/20;
 
-      let toggle = toInt(random(0, 2));
-
-      if (toggle == 0) {
-        strokeWeight(mouseX / 20);
-        line(posX, posY, posX + width / tileCount, posY + height / tileCount);
-
-      } else if (toggle == 1) {
-        strokeWeight(mouseY / 20);
-        line(posX, posY + width / tileCount, posX + height / tileCount, posY);
-      }
+      rect(posX+shiftX, posY+shiftY, mouseY/15, mouseY/15);
     }
   }
 }
 
-function mousePressed() {
-  actRandomSeed = toInt(random(100000));
-}
-
 function keyPressed() {
   if (key == 's' || key == 'S') saveThumb(650, 350);
-  if (key == '1') actStrokeCap = ROUND;
-  if (key == '2') actStrokeCap = SQUARE;
-  if (key == '3') actStrokeCap = PROJECT;
 }
 
 // Tools
