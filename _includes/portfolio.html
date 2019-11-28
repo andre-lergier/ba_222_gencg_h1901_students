@@ -1,7 +1,7 @@
 {% for col in site.collections %}
     {% if col.label != "posts" %}
         <section class="no-padding" id="{{ col.label }}">
-            <h3>{{ col.label | capitalize }} hi</h3>
+            <h3>{{ col.label | capitalize }}</h3>
                 <div class="container-fluid">
                     <div class="row no-gutter">
                         {% for doc in col.docs %}
