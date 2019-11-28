@@ -14,6 +14,9 @@ subtitle: I.BA_222_GENCG.H1901 - André Lergier
 # markdown: kramdown
 
 collections:
+  00-Studio-Web:
+    output: true
+
   01-Shapes:
     output: true
     
