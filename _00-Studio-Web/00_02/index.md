@@ -1,11 +1,10 @@
 ---
 layout: sketch
-title: "red drawing circle" 
+title: "sprinkling dots" 
 category: "Experiment" 
 thumb_name: "thumb.jpg"
 includes:
   - src: "sketch.js"
-  - src: "gui.js"
 ---
 
 <!-- 

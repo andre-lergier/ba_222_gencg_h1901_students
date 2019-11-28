@@ -1,5 +1,31 @@
 // Global var
- 
+/**
+ * GUI
+ */
+var options = {
+  actRandomSeed: 0,
+  tileCount: 20,
+  bgAlpha: 255, 
+  circleLineColor: 255, 
+  circleFillColor: [255, 120, 0], //RGB   
+  circleLineAlpha: 50,
+  fill: false,
+};
+
+window.onload = function() {
+  var gui = new dat.GUI();
+  gui.add(options, 'actRandomSeed');
+  gui.add(options, 'tileCount').min(1).max(100).step(1);
+  gui.add(options, 'bgAlpha').min(0).max(255).step(.5);
+  gui.add(options, 'circleLineColor').min(0).max(255).step(1);
+  gui.add(options, 'circleLineAlpha').min(0).max(255).step(.5);
+  gui.add(options, 'fill');
+  gui.addColor(options, 'circleFillColor');
+};
+
+/**
+ * P5
+ */
 function setup() {
   // Canvas setup
   canvas = createCanvas(windowWidth, windowHeight);
@@ -7,21 +33,19 @@ function setup() {
   // Detect screen density (retina)
   var density = displayDensity();
   pixelDensity(density);
-
-  colorMode(HSB, 1); // sets hsb as color range with max at 100
-  background(1,0,.8);
-  stroke(.5,1,1);
+  
+  background(200,200,200);
 }
 
-// let width = windowWidth;
-// let height = windowHeight;
 let time = 0;
-let speed = 0.01;
+let speed = 5;
 
 /* will be called allways when the browser is able to draw */
 function draw (){
-  //fill(000);
-  //rect(0,0,width,height);
+  // clear();
+  //background(200,200,200);
+  
+  // increase time with loop
   time = time + speed;
   
   let x = time%width;
@@ -30,15 +54,8 @@ function draw (){
   x = random(0, width);
   y = random(0, height);
   
-  // x = mouse.x;
-  
-  stroke(1, noise(time),1);
-  fill(255);
-  circle(noise(time) * width,noise(time/2)*height,noise(time) * 300);
-   /*
-  for(let i = 0; i <= height; i++){
-    line(noise(time)*width,i,noise(i)*width,noise(time)*height);
-  }*/
+  // noStroke();
+  circle(x,y,50);
 }
 
 function keyPressed() {
