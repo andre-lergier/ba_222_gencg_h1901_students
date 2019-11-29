@@ -90,8 +90,10 @@ for(let s=0; s<snakes; s++){
 }
 
 function draw() {
-  if(drawCount%50 == 0){
-    generateColorArray();
+  if(options.changeColor){
+    if(drawCount%50 == 0){
+      generateColorArray();
+    }
   }
   // generateColorArray()
   noStroke();
