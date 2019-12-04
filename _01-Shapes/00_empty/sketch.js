@@ -40,7 +40,14 @@ function draw() {
 }
 
 function keyPressed() {
-  if (key == 's' || key == 'S') saveThumb(650, 350);
+
+  if (keyCode === 32) setup() // 32 = Space
+  if (keyCode === 38) direction = 'up' // 38 = ArrowUp
+  if (keyCode === 40) direction = 'down' // 40 = ArrowDown
+  if (keyCode >= 48 && keyCode <= 57) rideDuration = getRideDuration(toInt(key)) // 48...57 = Digits
+  //
+  if (key === 's' || key === 'S') saveThumb(650, 350);
+
 }
 
 // Tools
