@@ -34,10 +34,9 @@ var options ={
 }
 
 
-var text, gui, config,bgcolorControl,color1Control,color2Control,noiseControl,LengthControl,NumsControl,SaveControl,RandomControl,SaveControl, ColorControl  ;
+var text, gui, config,bgcolorControl,color1Control,color2Control,noiseControl,LengthControl,NumsControl,SaveControl,RandomControl,SaveControl, ColorControl;
 window.onload = function() {
   document.getElementById('defaultCanvas0').onmousedown = function(e) {
-      // 阻止默认行为并取消冒泡
       if(typeof e.preventDefault === 'function') {
         e.preventDefault();
         e.stopPropagation();

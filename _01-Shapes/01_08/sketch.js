@@ -12,19 +12,28 @@ var options = {
   objects: 10,
   objectsMax: 50,
   noiseInc: 0.1,
+  noiseScale: 0.01,
+
   direction: -1,
   velocity: 0.05,
   start: 100,
   layerSpeed: 0.5,
-  noiseScale: 0.01,
   mountainsLength: 300,
   mountainsInterval: 5,
   moutainsLayer: 7,
-  mountainsType: 2,
+  mountainsLayerMax: 30,
+  mountainsType: 3,
   mountainsNoiseInc: 0.01,
 };
 
-var colors = [
+let gui;
+let drawCount = 0;
+let noiseBaseX = [];
+let noiseBaseY = [];
+let noiseIncrement = 0.01;
+let points = [];
+
+let colors = [
   '#2E3440',
   '#3B4252',
   '#434C5E',
@@ -44,20 +53,15 @@ colors = [
   '#2E3440',
 ]
 
+colors = [];
+for(var i = 0; i < options.mountainsLayerMax; i++) {
+  colors.push(
+    `hsb(240, 80%, ${100/options.mountainsLayerMax * (i + 1)}%)`
+  )
+}
+
 window.onload = function() {
-  var gui = new dat.GUI();
-  gui.add(options, 'baseCorners').min(3).max(25).step(1);
-  gui.add(options, 'nElements').min(2).max(30).step(1);
-  gui.add(options, 'radius').min(10).max(1000).step(1);
-  gui.add(options, 'opacity').min(0).max(50).step(0.2);
-  gui.add(options, 'objects').min(1).max(50).step(1);
-  gui.add(options, 'velocity').min(0).max(10).step(0.01);
-  gui.add(options, 'moutainsLayer').min(1).max(50).step(1);
-  gui.add(options, 'mountainsLength').min(1).max(width).step(1);
-  gui.add(options, 'mountainsInterval').min(1).max(50).step(1);
-  gui.add(options, 'mountainsType').min(1).max(3).step(1);
-  gui.add(options, 'mountainsNoiseInc').min(0.0001).max(10).step(0.01);
-  gui.add(options, 'changeColor');
+  this.initGUI();
 };
 
 function polygon(pX, pY, radius, ncorners) {
@@ -69,7 +73,6 @@ function polygon(pX, pY, radius, ncorners) {
     let y = radius * sin(angle * i) + pY;
     vertex(x,y);
   }
-
   endShape(CLOSE);
 }
 
@@ -106,30 +109,30 @@ function generateColorArray(){
   }
 }
 
-
 /**
  * function to generate mountain backgorund
  * @param noiseScale as bigger, to more bumpy the skyline will be
- * @param length length of line
+ * @param length length of line if type 2
  * @param interval every x from with it draws a line / point
- * @param {1,2,3} type 1: draw with lines, 2: draw flächen, 3: draw with lines and floating bottom
+ * @param {1,2,3} type 1: draw with lines, 2: draw with lines and floating bottom, 3: draw flächen
+ * @param layer number of current layer
+ * @param start 
  */
 function generateMountainBackground(noiseScale, length, width, interval, type, layer, start){
-  xOffset = Math.random(0);
-
+  let canvasOffset = 25;
+  let xOffset = 1;
   beginShape();
 
-  if(type == 1 || type == 2){
-    // vertex(0, height);
-  }
+  for (let x=-canvasOffset; x < width + canvasOffset; x++) {
+    // value from noise [0,1]
+    let noiseVal = noise((xOffset+x)*noiseScale, millis()/7000); // let noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
+    let yComp = start*layer*options.layerSpeed;
+    let noiseFactor = 80;
+    let y = yComp + noiseVal*noiseFactor;
 
-  for (let x=0; x < width; x++) {
-    // let noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
-    let noiseVal = noise((xOffset+x)*noiseScale);
-    let y = start*layer*options.layerSpeed+noiseVal*80;
-
-    if(x % interval == 0 || x == width-1){
-      if(type == 1 || type == 3){
+    // draw point if first, if in interval or if last
+    if(x == -canvasOffset || x % interval == 0 || x == width+canvasOffset-1){
+      if(type == 1 || type == 2){
         /**
          * draw line
          * (from top to bottom --> invert with height - length)
@@ -144,25 +147,40 @@ function generateMountainBackground(noiseScale, length, width, interval, type, l
         } else {
           line(x, y, x, y + length);
         }
-      }else if(type == 2) {
+      }else if(type == 3) {
         curveVertex(x,y);
+
+        points.push(createVector(x,y));
+        
+        strokeWeight(5); // Make the points 10 pixels in size
+        point(x, y);
+        strokeWeight(1)
+
       }
     }
   }
 
-  if(type == 1 || type == 2){
-    curveVertex(width, height);
-    curveVertex(width, height);
-    vertex(0, height);
-    vertex(0, height);
+  /**
+   * points bottom right, bottom left
+   */
+  if(type == 1 || type == 3){
+    let offset = 10;
+    curveVertex(width + offset, height + offset); // bottom right
+    curveVertex(width + offset, height + offset);
+    vertex(0 - offset, height + offset); // bottom left
+    vertex(0 - offset, height + offset);
     endShape(CLOSE);
   } else {
     endShape();
   }
 }
 
+
+
 /**
- * P5
+ * 
+ * SETUP / DRAW
+ * 
  */
 function setup() {
   // Canvas setup
@@ -174,7 +192,7 @@ function setup() {
   console.log(density);
   pixelDensity(density);
 
-  colorMode(HSB,100);
+  // colorMode(HSB,100);
   background(0,0,0);
 
   /**
@@ -193,12 +211,6 @@ function setup() {
 }
 
 
-let drawCount = 0;
-let noiseBaseX = [];
-let noiseBaseY = [];
-let noiseIncrement = 0.01;
-
-
 for(let s=0; s<options.objectsMax; s++){
   noiseBaseX[s] = Math.random() * 10;
   noiseBaseY[s] = Math.random() * 10;
@@ -206,19 +218,25 @@ for(let s=0; s<options.objectsMax; s++){
 
 function draw() {
   background(0);
+  fill(0,options.opacity);
+  rect(0,0,width,height);
 
+  // generate layers
   for(let i = 1; i <= options.moutainsLayer; i++){
-    stroke(100, 5, 100);
-    noStroke();
-    if(options.mountainsType == 2){
-     fill(60, 33/(options.moutainsLayer - (i -1)), 72/(options.moutainsLayer - (i-1)));
-     // fill(60, 33, 72);
-     // fill(color(colors[(i-1)%options.moutainsLayer]));
+    stroke(255);
+    if(options.mountainsType == 3){
+     fill(color(colors[i]));
     }
-    let interval = options.mountainsInterval*i*5;
+
+    /**
+     * variables for moutain background - different per layer
+     * start is different per line
+     */
     let noiseInc = options.mountainsNoiseInc*i;
+    let lineHeight = height/3;
+    let interval = options.mountainsInterval*i*5;
     options.start += options.velocity*options.direction;
-    generateMountainBackground(noiseInc, height/3, width, interval, options.mountainsType, i, options.start);
+    generateMountainBackground(noiseInc, lineHeight, width, interval, options.mountainsType, i, options.start);
   }
   
 
@@ -252,6 +270,8 @@ function draw() {
 function keyPressed() {
   if (key == 's' || key == 'S') saveThumb(650, 350);
   if (key == 'c' || key == 'C') generateColorArray();
+  if (key == 'd' || key == 'D') destroyGUI();
+  if (key == 'g' || key == 'G') initGUI();
   if (keyCode === 32) setup() // 32 = Space
   if (keyCode === 38) options.direction = 1; // 38 = ArrowUp
   if (keyCode === 40) options.direction = -1; // 40 = ArrowDown
@@ -260,6 +280,26 @@ function keyPressed() {
 /**
  * Tools
  */
+function initGUI(){
+  gui = new dat.GUI();
+  gui.add(options, 'baseCorners').min(3).max(25).step(1);
+  gui.add(options, 'nElements').min(2).max(30).step(1);
+  gui.add(options, 'radius').min(10).max(1000).step(1);
+  gui.add(options, 'opacity').min(0).max(50).step(0.2);
+  gui.add(options, 'objects').min(1).max(50).step(1);
+  gui.add(options, 'velocity').min(0).max(0.1).step(0.005);
+  gui.add(options, 'start').min(0).max(1000).step(10);
+  gui.add(options, 'moutainsLayer').min(1).max(30).step(1);
+  gui.add(options, 'mountainsLength').min(1).max(width).step(1);
+  gui.add(options, 'mountainsInterval').min(1).max(50).step(1);
+  gui.add(options, 'mountainsType').min(1).max(3).step(1);
+  gui.add(options, 'mountainsNoiseInc').min(0.0001).max(10).step(0.01);
+  gui.add(options, 'changeColor');
+}
+
+function destroyGUI(){
+  gui.destroy();
+}
 
 // resize canvas when the window is resized
 function windowResized() {
