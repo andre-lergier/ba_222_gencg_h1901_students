@@ -1,10 +1,9 @@
 ---
 layout: sketch
-title: "Drawing Mandala extended" 
+title: "Mountain background" 
 category: "Experiment" 
 thumb_name: "thumb.jpg"
 includes:
-  - src: "utils.js"
   - src: "sketch.js"
 ---
 
