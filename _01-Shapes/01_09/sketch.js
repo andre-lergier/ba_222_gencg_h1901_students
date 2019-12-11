@@ -3,8 +3,8 @@
  * GUI
  */
 var options = {
-  opacity: 0,
-  direction: -1,
+  opacity: 255, //19
+  direction: 1,
   velocity: 0.08, // will be overriden by setup
   start: 0, // will be overriden by setup
   layerSpeed: 0.5,
@@ -23,6 +23,8 @@ let noiseBaseY = [];
 let noiseIncrement = 0.01;
 let points = [];
 const possibleTypes = [2,3];
+let capturer, fps;
+const capture = false;
 
 let colors = [
   '#2E3440',
@@ -46,6 +48,7 @@ colors = [
 
 colors = [];
 
+
 function generateColorTheme1(){
   let h = floor(Math.random()*360);
   colors = [];
@@ -68,9 +71,6 @@ function generateColorTheme(){
   let to = colorHsluv(
     floor(Math.random()*180) + 180, 100, 50
   );
-
-  console.log(from);
-  console.log(to);
 
   colors = [];
   colorMode(RGB);
@@ -130,8 +130,8 @@ function generateMountainBackground(noiseScale, length, width, interval, type, l
   for (let x=-canvasOffset; x < width + canvasOffset; x++) {
     // value from noise [0,1]
     let noiseVal = noise((xOffset+x)*noiseScale, millis()/7000); // let noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
-    let yComp = start*layer*options.layerSpeed;
-    let noiseFactor = 120;
+    let yComp = start*layer*options.layerSpeed; // move down start per layer
+    let noiseFactor = 130;
     let y = yComp + noiseVal*noiseFactor;
 
     // draw point if first, if in interval or if last
@@ -180,13 +180,45 @@ function generateMountainBackground(noiseScale, length, width, interval, type, l
  * 
  */
 function setup() {
+  let canvasWidth;
+  let canvasHeight;
+
+  var density = displayDensity();
+  pixelDensity(density);
+
+  if(capture) {
+    canvasWidth = 6480 / density;
+    canvasHeight = 3840 / density
+
+    // Capture settings
+    fps = 60;
+    capturer = new CCapture({
+      format: 'png',
+      framerate: fps,
+      verbose: true,
+    });
+
+    console.log(capturer);
+
+    // this is optional, but lets us see how the animation will look in browser.
+    frameRate(fps);
+
+    // start the recording
+    capturer.start();
+  } else {
+    canvasWidth = windowWidth;
+    canvasHeight = windowHeight;
+  }
+
   // Canvas setup
-  canvas = createCanvas(windowWidth, windowHeight);
+  canvas = createCanvas(canvasWidth, canvasHeight);
   canvas.parent("p5Container");
 
   // Detect screen density (retina)
   var density = displayDensity();
   pixelDensity(density);
+
+  loop();
 
   generateColorTheme();
   background(0,0,0);
@@ -194,20 +226,37 @@ function setup() {
   // set initial values
   if(options.direction == -1){
     options.start = height/2;
-  }else {
+  } else {
     options.start = height/15;
   }
 
   options.velocity = height/15000;
-}
 
-
-for(let s=0; s<options.objectsMax; s++){
-  noiseBaseX[s] = Math.random() * 10;
-  noiseBaseY[s] = Math.random() * 10;
+  for(let s=0; s<options.objectsMax; s++){
+    noiseBaseX[s] = Math.random() * 10;
+    noiseBaseY[s] = Math.random() * 10;
+  }
+  
+  startTime = millis();
 }
 
 function draw() {
+  console.log('hi');
+  // duration in seconds
+  var rideDuration = 24;
+  var t = (millis() - startTime)/1000;
+
+  // if we have passed t=duration then end the animation.
+  if (t > rideDuration) {
+    noLoop();
+    console.log('finished recording.');
+    if(capture){
+      capturer.stop();
+      capturer.save();
+    }
+    return;
+  }
+
   //background(0);
   fill(0,options.opacity);
   rect(0,0,width,height);
@@ -223,35 +272,24 @@ function draw() {
      * variables for moutain background - different per layer
      * start is different per line
      */
-    let noiseInc = options.mountainsNoiseInc*i;
+    let noiseInc = options.mountainsNoiseInc*i; // increase noise inc every layer
     let lineHeight = height/3;
-    let interval = options.mountainsInterval*i;
-    options.start += options.velocity*options.direction;
+    let interval = options.mountainsInterval*i; // make bigger stepps every layer
+    // options.start += options.velocity*options.direction;
+
+    let stepFactor = animate(t, 0, 1, rideDuration, 2.5); // value between 0 & 1
+    options.start += options.velocity*options.direction*stepFactor;
+
     generateMountainBackground(noiseInc, lineHeight, width, interval, options.mountainsType, i, options.start);
   }
-  
-
-  // overlay rectangle to fake fade out
-  /*noStroke();
-  fill(0,options.opacity);
-  rect(0,0,width,height);
-
-  // options.radius = ((options.radius < options.radiusMax) ? options.radius *1.01 : options.radius *1.01*(-1));
-
-  for(let j=0; j < options.objects; j++){
-    //noiseBaseX[j] += noiseIncrement;
-    //noiseBaseY[j] += noiseIncrement;
-
-    noiseX = noise(noiseBaseX[j]);
-    noiseY = noise(noiseBaseY[j]);
-
-    let x = noiseX * windowWidth;
-    let y = noiseY * windowHeight;
-
-    // boxedPolygons(x,y,options.nElements, options.radius, options.baseCorners);
-  } */
 
   drawCount++;
+
+  if(capture){
+    // handle saving the frame
+    console.log('capturing frame');
+    capturer.capture(document.getElementById('defaultCanvas0'));
+  }
 }
 
 
@@ -259,7 +297,7 @@ function draw() {
  * global functions
  */
 window.onload = function() {
-  this.initGUI();
+  // this.initGUI();
 };
 
 function keyPressed() {
@@ -302,7 +340,7 @@ function boxedPolygons(x, y, elements, radius, baseCorners){
  */
 function initGUI(){
   gui = new dat.GUI();
-  gui.add(options, 'opacity').min(0).max(100).step(1);
+  gui.add(options, 'opacity').min(0).max(255).step(1);
   gui.add(options, 'velocity').min(0).max(0.1).step(0.005);
   gui.add(options, 'start').min(0).max(1000).step(10);
   gui.add(options, 'moutainsLayer').min(1).max(30).step(1);
