@@ -22,7 +22,7 @@ var options = {
   mountainsInterval: 5,
   moutainsLayer: 7,
   mountainsLayerMax: 30,
-  mountainsType: 3,
+  mountainsType: 2,
   mountainsNoiseInc: 0.01,
 };
 
