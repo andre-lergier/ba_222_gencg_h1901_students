@@ -260,6 +260,7 @@ function draw() {
   }
 
   //background(0);
+  noStroke();
   fill(0,options.opacity);
   rect(0,0,width,height);
   noFill();

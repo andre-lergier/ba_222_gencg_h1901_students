@@ -4,18 +4,20 @@
  */
 var options = {
   opacity: 255, //19
-  direction: -1,
+  direction: 1,
   velocity: 0.04, // will be overriden by setup
   start: 0, // will be overriden by setup
   layerSpeed: 0.2,
   mountainsLength: 100,
-  mountainsInterval: 10,
+  mountainsInterval: 15,
   moutainsLayer: 12,
   mountainsLayerMax: 13,
   mountainsType: 3,
   mountainsNoiseInc: 0.01,
   capture: false,
   elevator: false,
+  inverse: false,
+  colorTheme: 4,
 };
 
 let gui;
@@ -26,7 +28,7 @@ let noiseIncrement = 0.01;
 let points = [];
 const possibleTypes = [2,3];
 let capturer;
-const fps = 60;
+const fps = 30;
 const rideDuration = 24;
 const framesOverall = fps * rideDuration;
 
@@ -38,22 +40,39 @@ colors = [];
 
 // color theme with hsluv
 function generateColorTheme(){
-  let h = floor(Math.random()*360);
 
-  let from = colorHsluv(
-    floor(Math.random()*180), 100, 50
-  );
+  let from = [
+    colorHsluv(
+      floor(Math.random()*180), 100, 50
+    ),
+    colorHsluv(10.6, 87, 67),
+    colorHsluv(38,88,77),
+    colorHsluv(36.7, 100, 96), // #fff1eb
+    color('#c2e9fb'),
+    color('#fccb90'),
+  ]
 
-  let to = colorHsluv(
-    floor(Math.random()*180) + 180, 100, 50
-  );
+  let to = [
+    colorHsluv(
+      floor(Math.random()*180) + 180, 100, 50
+    ),
+    colorHsluv(254.1, 98.3,77.9),
+    colorHsluv(254.1, 98.3,77.9),
+    colorHsluv(224.8, 84,86.5),
+    color('#5e8ad4'),
+    color('#d7a2e4'),
+  ]
 
   colors = [];
   colorMode(RGB);
-  for(var i = 0; i < options.mountainsLayerMax; i++) {
-    colors.push(
-      lerpColor(from, to, 1/options.mountainsLayerMax * (i+1))
-    );
+  for(let c = 0; c < from.length; c++){
+    let tempColorArray = [];
+    for(let i = 0; i < options.mountainsLayerMax; i++) {
+      tempColorArray.push(
+        lerpColor(from[c], to[c], 1/options.mountainsLayerMax * (i+1))
+      );
+    }
+    colors.push(tempColorArray);
   }
 }
 
@@ -65,10 +84,6 @@ function getRandomColor(noiseXOffH, noiseXOffS, noiseXOffB){
   return colorHsluv(
     noiseH, noiseS, noiseB
   );
-
-  // return color(floor(noise(noiseXOffH)*360), floor(noise(noiseXOffS)*factor), floor(noise(noiseXOffB)*factor));
-  // return color(floor(noise(noiseXOffH)*360), floor(noise(noiseXOffS)*factor), floor(noise(noiseXOffB)*factor));
-  return color(`hsb(${noiseH}, ${noiseS}%, ${noiseB}%)`)
 }
 
 function generateColorArray(){
@@ -170,11 +185,6 @@ function setup() {
       verbose: true,
     });
 
-    console.log(capturer);
-
-    // this is optional, but lets us see how the animation will look in browser.
-    frameRate(fps);
-
     // start the recording
     capturer.start();
   } else {
@@ -203,6 +213,9 @@ function setup() {
   loop();
 
   generateColorTheme();
+  colors.forEach(element => {
+    console.table(element);
+  });
   background(0,0,0);
 
   // set initial values
@@ -250,6 +263,7 @@ function draw() {
   }
 
   //background(0);
+  noStroke();
   fill(0,options.opacity);
   rect(0,0,width,height);
 
@@ -260,7 +274,7 @@ function draw() {
       strokeWeight(3);
     }
     if(options.mountainsType == 3){
-     fill(color(colors[i]));
+     fill(color(colors[options.colorTheme][i]));
     }
 
     /**
@@ -269,8 +283,37 @@ function draw() {
      */
     let noiseInc = options.mountainsNoiseInc*i; // increase noise inc every layer
     let lineHeight = height/3;
-    let amountOfPoints = floor(options.mountainsInterval*(i/2)); // make bigger stepps every layer
-    let stepFactor = animate(t, 0, stepSize / 3, rideDuration, 2.5); // value between 0 & 1
+    const intervalDivider = 3;
+    let amountOfPoints = floor(options.mountainsInterval*(i / intervalDivider)); // make bigger stepps every layer
+    
+    /**
+     * layer 1: 15 * 1 / 3 = 5
+     * layer 2: 15 * 2 / 3 = 10
+     * layer 3: 15 * 3 / 3 = 15
+     * layer 4: 15 * 4 / 3 = 20
+     */
+
+    if(options.inverse){
+      /**
+       * 15 * 4 = 40
+       * 
+       * layer 1: 15 * 4 / 3 = 20
+       * layer 2: 15 * 3 / 3 = 15
+       * layer 3: 15 * 2 / 3 = 10
+       * layer 4: 15 * 1 / 3 = 5
+       */
+
+      amountOfPoints = floor(options.mountainsInterval*(options.moutainsLayer + 1 - i) / 3);
+      // amountOfPoints = (options.mountainsInterval * options.moutainsLayer / intervalDivider) - amountOfPoints;
+    }
+    // console.log(amountOfPoints);
+    // noLoop();
+    let stepFactor;
+    if(options.capture || options.elevator){
+      stepFactor = animate(t, 0, stepSize / 9, rideDuration, 2.5); // value between 0 & 1
+    } else {
+      stepFactor = animate(t, 0, stepSize / 3, rideDuration, 2.5); // value between 0 & 1  
+    }
     let step = options.direction * stepFactor;
     options.start += step;
     console.log('step: ' + step);

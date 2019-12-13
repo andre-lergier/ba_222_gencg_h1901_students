@@ -239,7 +239,7 @@ function setup() {
 function draw() {
   console.log('hi');
   // duration in seconds
-  var rideDuration = 24;
+  var rideDuration = 5;
   var t = (millis() - startTime)/1000;
 
   // if we have passed t=duration then end the animation.
