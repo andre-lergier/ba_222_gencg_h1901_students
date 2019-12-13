@@ -34,33 +34,11 @@ let rideDelta = 0;
 let stepSize = 0;
 let currentFrame = 1;
 
-let colors = [
-  '#2E3440',
-  '#3B4252',
-  '#434C5E',
-  '#4C566A',
-  '#D8DEE9',
-  '#E5E9F0',
-  '#ECEFF4',
-];
-
-colors = [
-  '#EBF0F2',
-  '#91C4D9',
-  '#658DA6',
-  '#376B8C',
-  '#4C566A',
-  '#3B4252',
-  '#2E3440',
-]
-
 colors = [];
 
 // color theme with hsluv
 function generateColorTheme(){
   let h = floor(Math.random()*360);
-  // let start = `hsb(${floor(Math.random()*360)}, 80%, 100%)`;
-  // let to = `hsb(${floor(Math.random()*360)}, 80%, 20%)`;
 
   let from = colorHsluv(
     floor(Math.random()*180), 100, 50
@@ -296,8 +274,6 @@ function draw() {
     let step = options.direction * stepFactor;
     options.start += step;
     console.log('step: ' + step);
-    //options.start += options.velocity*options.direction*stepFactor;
-    // options.start = height/10;
 
     generateMountainBackground(noiseInc, lineHeight, width, amountOfPoints, options.mountainsType, i, options.start);
   }

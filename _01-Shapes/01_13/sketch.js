@@ -50,8 +50,6 @@ colors = [
   '#2E3440',
 ]
 
-colors = [];
-
 // color theme with hsluv
 function generateColorTheme(){
   let h = floor(Math.random()*360);
@@ -154,7 +152,7 @@ function setup() {
 
   loop();
 
-  generateColorTheme();
+  // generateColorTheme();
   background(0,0,0);
 
   // set initial values
@@ -229,8 +227,9 @@ function draw() {
 
   timeCounter += 0.005;*/
 
-  stroke(color(colors[currentFrame % options.maxObjects]));
+  // stroke(color(colors[currentFrame % options.maxObjects]));
   for(let i = 0; i < options.objects; i++){
+    fill(color(colors[(i % colors.length)]));
     circle(width * noise((noiseBaseX[i])*noiseScale, millis()/4000),height * noise((noiseBaseY[i])*noiseScale, millis()/3000),20);
   }
 
