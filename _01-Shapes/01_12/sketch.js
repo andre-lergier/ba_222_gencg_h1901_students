@@ -14,7 +14,7 @@ var options = {
   mountainsLayerMax: 13,
   mountainsType: 3,
   mountainsNoiseInc: 0.01,
-  capture: true,
+  capture: false,
   elevator: false,
 };
 
