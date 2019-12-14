@@ -3,6 +3,7 @@ body {
   height: 100%;
   width: 100%;
   background-color: white;
+  color:black;
 }
 
 body {
@@ -240,27 +241,23 @@ header {
   box-shadow: 0 8px 15px rgba(0,0,0,0.1);
 
   .portfolio-box-caption {
-    color: white;
+    color: black;
     opacity: 0;
     display: block;
-    background: rgba( $theme-primary, .9);
-    position: absolute;
-    bottom: 0;
-    text-align: center;
+    background: white;
     width: 100%;
     height: 100%;
     @include transition-all;
+
     .portfolio-box-caption-content {
       width: 100%;
-      text-align: center;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
+
       .project-category,
       .project-name {
-        @include sans-serif-font;
+        color:#bbb;
         padding: 0 15px;
       }
+
       .project-category {
         text-transform: uppercase;
         font-weight: 600;
