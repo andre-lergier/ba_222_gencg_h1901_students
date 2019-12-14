@@ -24,9 +24,11 @@ a {
   @include transition-all;
   color: $theme-primary;
   text-decoration: none;
-
+  color: #658DA6;
+  
   &:hover,
   &:focus {
+    color: #91C4D9;
     color: darken($theme-primary, 10%);
   }
 }
@@ -38,6 +40,14 @@ h4,
 h5,
 h6 {
   @include sans-serif-font;
+}
+
+h3{
+  font-size: 30px;
+  padding: 0 15px;
+  font-weight: 500;
+  margin-top: 40px;
+  margin-bottom: 20px;
 }
 
 p {
@@ -264,27 +274,18 @@ header {
         font-weight: 600;
         font-size: 14px;
         color:#aaa;
+        font-size: 12px;
+        margin-bottom: 7px;
       }
       .project-name {
         font-size: 18px;
+        font-weight: 600;
       }
     }
   }
   &:hover {
     .portfolio-box-caption {
       opacity: 1;
-    }
-  }
-  @media (min-width: 768px) {
-    .portfolio-box-caption {
-      .portfolio-box-caption-content {
-        .project-category {
-          font-size: 16px;
-        }
-        .project-name {
-          font-size: 22px;
-        }
-      }
     }
   }
 }
