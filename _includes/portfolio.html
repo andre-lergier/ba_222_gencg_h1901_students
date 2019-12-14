@@ -3,7 +3,7 @@
         <section class="no-padding" id="{{ col.label }}">
             <h3>{{ col.label | capitalize }}</h3>
                 <div class="container-fluid">
-                    <div class="row no-gutter">
+                    <div class="row">
                         {% for doc in col.docs %}
                             <div class="col-lg-4 col-sm-6">
                                 <a href="{{ site.baseurl }}{{ doc.url }}" class="portfolio-box">

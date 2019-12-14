@@ -4,7 +4,7 @@
  */
 var options = {
   opacity: 255, //19
-  direction: 1,
+  direction: -1,
   velocity: 0.04, // will be overriden by setup
   start: 0, // will be overriden by setup
   layerSpeed: 0.2,
@@ -213,9 +213,9 @@ function setup() {
   loop();
 
   generateColorTheme();
-  colors.forEach(element => {
+  /* colors.forEach(element => {
     console.table(element);
-  });
+  }); */
   background(0,0,0);
 
   // set initial values
@@ -234,7 +234,7 @@ function setup() {
   }
   
   stepSize = rideDelta / framesOverall;
-  console.log(stepSize);
+  // console.log(stepSize);
 
   const difference = options.start - options.target
 
