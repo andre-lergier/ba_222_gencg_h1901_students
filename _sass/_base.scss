@@ -23,6 +23,8 @@ hr.light {
 a {
   @include transition-all;
   color: $theme-primary;
+  text-decoration: none;
+
   &:hover,
   &:focus {
     color: darken($theme-primary, 10%);
@@ -242,7 +244,7 @@ header {
 
   .portfolio-box-caption {
     color: black;
-    opacity: 0;
+    opacity: .8;
     display: block;
     background: white;
     width: 100%;
@@ -251,17 +253,17 @@ header {
 
     .portfolio-box-caption-content {
       width: 100%;
+      padding: 15px;
 
-      .project-category,
-      .project-name {
-        color:#bbb;
-        padding: 0 15px;
+      .project-category, .project-name {
+        line-height:1;
       }
 
       .project-category {
         text-transform: uppercase;
         font-weight: 600;
         font-size: 14px;
+        color:#aaa;
       }
       .project-name {
         font-size: 18px;
