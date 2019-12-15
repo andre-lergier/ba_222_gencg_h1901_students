@@ -1,7 +1,7 @@
 ---
 layout: sketch
-title: "Own Test" 
-category: "Experiment 05" 
+title: "Example Test" 
+category: "Experiment" 
 thumb_name: "thumb.jpg"
 includes:
   - src: "sketch.js"

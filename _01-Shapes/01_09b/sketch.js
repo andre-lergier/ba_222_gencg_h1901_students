@@ -243,14 +243,14 @@ function draw() {
   var t = (millis() - startTime)/1000;
 
   // if we have passed t=duration then end the animation.
-  if (t > rideDuration) {
-    noLoop();
-    console.log('finished recording.');
-    if(capture){
+  if(capture){
+    if (t > rideDuration) {
+      noLoop();
+      console.log('finished recording.');
       capturer.stop();
       capturer.save();
+      return;
     }
-    return;
   }
 
   //background(0);

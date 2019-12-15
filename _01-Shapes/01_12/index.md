@@ -1,7 +1,7 @@
 ---
 layout: sketch
-title: "Mountain background extended" 
-category: "Experiment" 
+title: "Mountain Background Final" 
+category: "Schindler Elevator" 
 thumb_name: "thumb.jpg"
 includes:
   - src: "sketch.js"

@@ -1,6 +1,6 @@
 ---
 layout: sketch
-title: "Mountain background" 
+title: "Mountain Background Base" 
 category: "Experiment" 
 thumb_name: "thumb.jpg"
 includes:

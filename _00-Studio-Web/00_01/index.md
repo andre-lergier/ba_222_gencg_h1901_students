@@ -1,6 +1,6 @@
 ---
 layout: sketch
-title: "red drawing circle" 
+title: "Red Drawing Circle" 
 category: "Experiment" 
 thumb_name: "thumb.jpg"
 includes:

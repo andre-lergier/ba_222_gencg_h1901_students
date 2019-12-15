@@ -1,6 +1,6 @@
 ---
 layout: sketch
-title: "sprinkling dots" 
+title: "Appearing Dots" 
 category: "Experiment" 
 thumb_name: "thumb.jpg"
 includes:
