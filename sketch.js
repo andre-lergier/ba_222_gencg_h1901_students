@@ -3,7 +3,7 @@
  * GUI
  */
 var options = {
-  opacity: 100,
+  opacity: 255,
   direction: 1,
   velocity: 0.08, // will be overriden by setup
   start: 0, // will be overriden by setup
