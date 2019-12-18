@@ -277,7 +277,7 @@ function draw() {
     let interval = options.mountainsInterval*i; // make bigger stepps every layer
     // options.start += options.velocity*options.direction;
 
-    let stepFactor = animate(t, 0, 1, rideDuration, 2.5); // value between 0 & 1 for acc
+    // let stepFactor = animate(t, 0, 1, rideDuration, 2.5); // value between 0 & 1 for acc
     // options.start += options.velocity*options.direction*stepFactor;
 
     generateMountainBackground(noiseInc, lineHeight, width, interval, options.mountainsType, i, options.start);
