@@ -219,7 +219,7 @@ function setup() {
   background(0,0,0);
 
   // set initial values
-  options.start = height/1.5;
+  options.start = height/2;
 
   options.velocity = height/15000;
 
